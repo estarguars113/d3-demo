@@ -1,0 +1,40 @@
+{
+  "name": "d3-js-demo",
+  "version": "1.0.0",
+  "description": "basic d3 demo",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "dev": "webpack-dev-server --open --config webpack.config.js",
+    "dev:hot": "npm run dev -- --hot --inline"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/estarguars113/d3-demo.git"
+  },
+  "keywords": [
+    "d3",
+    "js",
+    "dataviz"
+  ],
+  "author": "estarguars113@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/estarguars113/d3-demo/issues"
+  },
+  "homepage": "https://github.com/estarguars113/d3-demo#readme",
+  "dependencies": {
+    "d3": "^5.7.0",
+    "webpack": "^4.28.3",
+    "webpack-dev-server": "^3.1.14"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.0",
+    "@babel/core": "^7.2.2",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "^10.0.1",
+    "babel-loader": "^8.0.4",
+    "eslint": "^5.11.1",
+    "webpack-cli": "^3.1.2"
+  }
+}

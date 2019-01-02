@@ -1,0 +1,18 @@
+body {
+    font-family: Helvetica, Arial, sans-serif
+}
+
+h1 {
+    background-color: #2a5599;
+    color: #FFF;
+    padding: 5px;
+}
+
+svg{
+    border: solid 1px #000;
+}
+
+.mainView{
+    display: flex;
+    flex-wrap: nowrap;
+}
