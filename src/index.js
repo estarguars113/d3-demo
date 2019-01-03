@@ -3,10 +3,15 @@ import * as d3 from 'd3';
 let store = {};
 
 function loadData() {
-    d3.csv('./src/routes.csv')
-        .then( data => {
-            store.routes = data;
+    Promise.all([
+        d3.csv('./src/routes.csv'),
+        d3.json('./src/countries.geo.json')
+    ])
+        .then( datasets => {
+            store.routes = datasets[0];
+            store.geoJSON = datasets[1];
             showData();
+            drawMap(store.geoJSON);
             return store;
         })
         .catch( e => {
@@ -130,6 +135,42 @@ function drawAxesAirlinesChart(airlines, scales, config){
             `translate(${margin.left}px,${margin.top}px)`
         )
         .call(axisY);
+}
+
+function getMapConfig(){
+    let width = 600;
+    let height = 400;
+    let container = d3.select('#Map')
+        .attr('width', width)
+        .attr('height', height);
+    return { width, height, container };
+}
+
+function getMapProjection(config) {
+    let {width, height} = config;
+    let projection = d3.geoMercator();
+    projection.scale(97)
+        .translate([width / 2, height / 2 + 20]);
+              
+    store.mapProjection = projection;
+    return projection;
+}
+
+function drawBaseMap(container, countries, projection){
+    let path = d3.geoPath().projection(projection);
+    
+    container.selectAll('path').data(countries)
+        .enter().append('path')
+        .attr('d', path)
+        .attr('stroke', '#ccc')
+        .attr('fill', '#eee');
+}
+
+
+function drawMap(geoJeon) {
+    let config = getMapConfig();
+    let projection = getMapProjection(config);
+    drawBaseMap(config.container, geoJeon.features, projection);
 }
 
 loadData();
