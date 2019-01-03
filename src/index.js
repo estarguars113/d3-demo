@@ -12,6 +12,9 @@ function loadData() {
             store.geoJSON = datasets[1];
             showData();
             drawMap(store.geoJSON);
+
+            let airports = groupByAirport(store.routes);
+            drawAirports(airports);
             return store;
         })
         .catch( e => {
@@ -172,5 +175,54 @@ function drawMap(geoJeon) {
     let projection = getMapProjection(config);
     drawBaseMap(config.container, geoJeon.features, projection);
 }
+
+function groupByAirport(data) {
+    let result = data.reduce((result, d) => {
+        let currentDest = result[d.DestAirportID] || {
+            'AirportID': d.DestAirportID,
+            'Airport': d.DestAirport,
+            'Latitude': +d.DestLatitude,
+            'Longitude': +d.DestLongitude,
+            'City': d.DestCity,
+            'Country': d.DestCountry,
+            'Count': 0
+        };
+        currentDest.Count += 1;
+        result[d.DestAirportID] = currentDest;
+
+        let currentSource = result[d.SourceAirportID] || {
+            'AriportID': d.SourceAirportID,
+            'Airport': d.SourceAirport,
+            'Latitude': +d.SourceLatitude,
+            'Longitude': +d.SourceLongitude,
+            'City': d.SourceCity,
+            'Country': d.SourceCountry,
+            'Count': 0
+        };
+        currentSource.Count += 1;
+        result[d.SourceAirportID] = currentSource;
+
+        return result;
+    }, {});
+    
+    result = Object.keys(result).map(key => result[key]);
+    return result;
+}
+
+function drawAirports(airports) {
+    let config = getMapConfig(); 
+    let projection = getMapProjection(config);
+    let container = config.container; 
+          
+    container.selectAll('circle')
+        .data(airports)
+        .enter()
+        .append('circle')
+        .attr('r', 1)
+        .attr('cx', d => projection([d.Longitude, d.Latitude])[0])
+        .attr('cy', d => projection([d.Longitude, d.Latitude])[1])
+        .attr('fill', '#2a5599');
+}
+
 
 loadData();
