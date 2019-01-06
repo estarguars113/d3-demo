@@ -113,9 +113,16 @@ function drawBarsAirlinesChart(airlines, scales, config) {
     bars.enter().append('rect')
         .attr('height', yScale.bandwidth())
         .attr('y', (d) => yScale(d.AirlineName))
-        //TODO: set the width of the bar to be proportional to the airline count using the xScale
         .attr('width', (d) => xScale(d.Count))
-        .attr('fill', '#2a5599');
+        .attr('fill', '#2a5599')
+        .on('mouseenter', function(d) { 
+            this.style.fill = '#992a5b';
+            drawRoutes(d.AirlineID);
+        })
+        .on('mouseleave', function() { 
+            this.style.fill = '#2a5599';
+            drawRoutes('');
+        });
 }
 
 function drawAxesAirlinesChart(airlines, scales, config){
@@ -222,6 +229,29 @@ function drawAirports(airports) {
         .attr('cx', d => projection([d.Longitude, d.Latitude])[0])
         .attr('cy', d => projection([d.Longitude, d.Latitude])[1])
         .attr('fill', '#2a5599');
+}
+
+
+function drawRoutes(airlineID) {
+    const routes = store.routes;
+    let projection = store.mapProjection;
+    let container = d3.select('#Map');
+    let selectedRoutes = routes.filter( item => item.AirlineID === airlineID);
+    let bindedData = container.selectAll('line')
+        .data(selectedRoutes, d => d.ID)
+        .enter()
+        .append('line')
+        .attr('x1', d => projection([d.SourceLongitude, d.SourceLatitude])[0])
+        .attr('y1', d => projection([d.SourceLongitude, d.SourceLatitude])[1])
+        .attr('x2', d => projection([d.DestLongitude, d.DestLatitude])[0])
+        .attr('y2', d => projection([d.DestLongitude, d.DestLatitude])[1])
+        .attr('stroke', '#992a2a')
+        .attr('opacity', 0.1);
+
+    container.selectAll('line')
+        .data(selectedRoutes, d => d.ID)
+        .exit()
+        .remove();
 }
 
 
